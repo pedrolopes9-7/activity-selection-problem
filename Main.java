@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 
 public class Main {
 	public static void main (String[] args){
@@ -16,34 +18,59 @@ public class Main {
 							"-g to run Greedy Heuristic.\n" +
 							"-d to run Dynamic Programming Heuristic\n" +
 							"-b to run Backtracking Heuristic\n");
-		if (args[0] == "-i"){
-			fileName = args[1];
-		}
 
-		readInstances(fileName, list, 8);
+		fileName = "instances/" + args[1] + ".txt";
+
+		/* TODO implementar os 3 métodos de resolucao
+		if (args[2] == "-g"){
+			//Roda algoritmo guloso
+		}else if (args[2] == "-d"){
+			//Roda algoritmo de programação dinâmica
+		}else{
+			//Roda algoritmo de backtracking
+		}
+		*/
+
+		//fileQnt = número de arquivos de instancias
+		//fileSize = tamanho da instancia
+		//generateInstances(fileQnt, fileSize);
+		//readInstances(List<File> listFiles, list, n);
+		//readInstances(fileName, list, 8);
+		generateInstances(10, 10);
+
 	}
 
-	private static void readInstances(String fileName, List<Activity> activities, int n){
-		File file = new File(fileName);
-		//n -> number of instances
-		double a, b;
+	public static void generateInstances(int fileQnt, int fileSize){
+		final String ABSOLUTE_PATH = "/home/sigma/Documentos/activity-selection-problem/instances/";
+		File out = null;
 
+		for (int i = 0; i < fileQnt; i++){
+			out = new File(ABSOLUTE_PATH + "instance" + i + ".txt");
+
+			try{
+				out.createNewFile();
+				FileWriter writer = new FileWriter(out);
+				for (int j = 0; i < fileSize; i++){
+					writer.write("1"); writer.write("2");
+				}
+			} catch (IOException ex){
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public static void readInstances(String fileName, List<Activity> activities, int fileSize){
+		Scanner s = null;
 		try {
-			Scanner s = new Scanner(file);
+			File file = new File(fileName.trim());
+			s = new Scanner(file);
 
-			for (int i = 0; i < n; i++){
-				a = s.nextDouble();
-				b = s.nextDouble();
-
-				activities.add(new Activity(a, b));
+			for (int i = 0; i < fileSize; i++){
+				activities.add(new Activity(s.nextDouble(), s.nextDouble()));
 			}
 
 		} catch(IOException ex){
 			ex.printStackTrace();
-		}
-
-		for (Activity it : activities){
-			System.out.println(it.getStartTime() + "  " + it.getEndTime());
 		}
 	}
 }
