@@ -1,11 +1,10 @@
-import java.util.Scanner;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.util.Random;
 
 public class Main {
 	public static void main (String[] args){
@@ -33,9 +32,7 @@ public class Main {
 
 		//fileQnt = número de arquivos de instancias
 		//fileSize = tamanho da instancia
-		//generateInstances(fileQnt, fileSize);
-		//readInstances(List<File> listFiles, list, n);
-		//readInstances(fileName, list, 8);
+
 		generateInstances(10, 10);
 
 	}
@@ -43,19 +40,32 @@ public class Main {
 	public static void generateInstances(int fileQnt, int fileSize){
 		final String ABSOLUTE_PATH = "/home/sigma/Documentos/activity-selection-problem/instances/";
 		File out = null;
+		List<FileWriter> listWriter = new ArrayList<FileWriter>(fileQnt);
 
+		//TODO for tá rodando só uma vez sabe-se lá pq. só um arquivo tá sendo gerado.
 		for (int i = 0; i < fileQnt; i++){
+			System.out.println(i + "\n");
 			out = new File(ABSOLUTE_PATH + "instance" + i + ".txt");
 
 			try{
 				out.createNewFile();
-				FileWriter writer = new FileWriter(out);
+				listWriter.add(new FileWriter(out));
+
 				for (int j = 0; i < fileSize; i++){
-					writer.write("1"); writer.write("2");
+					listWriter.get(j).write("1" + " " + "2" + "\n"); 
 				}
+
 			} catch (IOException ex){
 				ex.printStackTrace();
 			}
+		}
+
+		try{
+			for (FileWriter lw : listWriter){
+				lw.close();
+			} 
+		}catch(IOException ex){
+			ex.printStackTrace();
 		}
 	}
 
