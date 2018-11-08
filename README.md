@@ -23,4 +23,4 @@ Instances can be found on ~/instances/ directory. Any number of intances with an
   $ java Main -k
 ```
 
-Make shure to change the global variables FILE_SIZE and FILE_QNT (size of every instance and quantity of instances, respectively).
+Make shure to change the global variables FILE_SIZE and FILE_QNT (size of every instance and quantity of instances, respectively), if you want different type of instances. By default, the values of FILE_SIZE = 200 and FILE_QNT = 200. The integer values of start and finish time of the activities is generated randomly between 1 and 20.
