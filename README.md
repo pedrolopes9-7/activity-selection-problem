@@ -1,7 +1,7 @@
 # activity-selection-problem
 Greedy, Dynamic Programming and Backtracking Algorithms for the Activity Selection Problem
 
-This program solves the problem to select a set of compatible activities from a input set of activities. An activity is compatible with another, if their time interval (finish time - start time) is comptabible. The problem is to find the optimal subset (with maximum size) of activities with the property of compatibility betwwen every pair of activities.
+This program solves the problem to select a set of compatible activities from a input set of activities. An activity is compatible with another, if their time interval (finish time - start time) is compatible. The problem is to find the optimal subset (with maximum size) of activities with the property of compatibility between every pair of activities.
 
 To compile: 
 ```bash
