@@ -11,8 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Main {
 	public static final String ABSOLUTE_PATH = "instances/";
 	//public static final String ABSOLUTE_PATH = "/home/sigma/Documentos/activity-selection-problem/instances/";
-	public static final int FILE_SIZE = 10;
-	public static final int FILE_QNT = 10;
+	public static final int FILE_SIZE = 200;
+	public static final int FILE_QNT = 200;
 
 	public static void main (String[] args){
 		String fileName = "";
@@ -99,11 +99,9 @@ public class Main {
 				listWriter.add(new FileWriter(out));
 
 				/* gera m linhas de atividades para a instancia. m = FILE_SIZE */
-				/*TODO bug na linha 107,a cessando posicao invalida da lista de writers. indice maior que tamanho*/
 				for (int j = 0; j < fileSize; j++){
 					random1 = ThreadLocalRandom.current().nextInt(min, max + 1);
 					random2 = ThreadLocalRandom.current().nextInt(min, max + 1);
-					System.out.println(random1 + " " + random2);
 					listWriter.get(i).write(String.valueOf(random1) + " " + String.valueOf(random2) + "\n"); 
 				}
 
@@ -142,8 +140,16 @@ class Activity implements Comparable<Activity>{
 	private int end_time;
 
 	public Activity(int st, int et){
-		this.start_time = st;
-		this.end_time = et;
+		if (st == et){
+			this.start_time = st;
+			this.end_time = st + 1;
+		}else if (st < et){
+			this.start_time = st;
+			this.end_time = et;
+		}else{
+			this.start_time = et;
+			this.end_time = st;
+		}
 	}
 
 	public int getStartTime(){
