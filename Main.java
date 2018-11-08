@@ -7,14 +7,17 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
+import java.lang.System;
 
 public class Main {
 	public static final String ABSOLUTE_PATH = "instances/";
 	//public static final String ABSOLUTE_PATH = "/home/sigma/Documentos/activity-selection-problem/instances/";
-	public static final int FILE_SIZE = 200;
-	public static final int FILE_QNT = 200;
+	public static final String OUTPUT_PATH = "output/";
+	public static final int FILE_SIZE = 1000;
+	public static final int FILE_QNT = 1000;
 
 	public static void main (String[] args){
+		long execTime = 0, execStartTime = 0, execFinishTime = 0;
 		String fileName = "";
 		List<Activity> listActivities = new ArrayList<Activity>();
 		List<Activity> output = null;
@@ -34,11 +37,18 @@ public class Main {
 			readInstances(fileName, listActivities, FILE_SIZE);
 
 			if (args[2].equals("-g")){
+				/* TODO melhorar exicibição com métricas: tempo de execucao, valor da soluçao otima... pensar em mais...
+					Funcao de escrever resultados em arquivo externo nao está escrevendo nada..*/ 
+				execStartTime = System.currentTimeMillis();
 				output = greedyAlgorithm(listActivities);
-				System.out.println("Seleção de atividades compatíveis pelo algoritmo guloso:");
+				execFinishTime = System.currentTimeMillis();
+
+				execTime = execFinishTime - execStartTime;
+				writeOutput(output, execTime);
 				for (Activity ac : output){
 					System.out.println(ac);
 				}
+				System.out.println(execTime);
 			}else if (args[2].equals("-d")){
 			//RUN dynamic programming algorithm
 			}else if (args[2].equals("-b")){
@@ -83,11 +93,12 @@ public class Main {
 	}
 
 	public static void generateInstances(int fileQnt, int fileSize){
+		String space = "";
 		File out = null;
 		List<FileWriter> listWriter = new ArrayList<FileWriter>(fileQnt);
 
 		/* intervalo do numero aleatorio*/
-		final int min = 1, max = 20;
+		final int min = 1, max = 60;
 		int random1 = 0, random2 = 0;;
 
 		/* gera n instancias para o problema. n = FILE_QNT*/
@@ -102,7 +113,7 @@ public class Main {
 				for (int j = 0; j < fileSize; j++){
 					random1 = ThreadLocalRandom.current().nextInt(min, max + 1);
 					random2 = ThreadLocalRandom.current().nextInt(min, max + 1);
-					listWriter.get(i).write(String.valueOf(random1) + " " + String.valueOf(random2) + "\n"); 
+					listWriter.get(i).write(String.valueOf(random1) + " " + String.valueOf(random2) + "\r\n"); 
 				}
 
 			} catch (IOException ex){
@@ -130,6 +141,26 @@ public class Main {
 			}
 
 		} catch(IOException ex){
+			ex.printStackTrace();
+		}
+	}
+
+	public static void writeOutput(List<Activity> list, long execTime){
+		final int subset_size = list.size();
+
+		try{
+			File output_file = new File(OUTPUT_PATH + "output.txt");
+			FileWriter writer = new FileWriter(output_file);
+
+			if (!output_file.exists()){
+				output_file.createNewFile();
+			}
+
+			for (Activity ac : list){
+				/*TODO funcao escrevendo caracter vazio.. problema esta nesse for.*/
+				writer.write("Inicio: " + ac.getStartTime() + " " + "Termino: " + ac.getEndTime());
+			}
+		}catch(IOException ex){
 			ex.printStackTrace();
 		}
 	}
@@ -176,6 +207,6 @@ class Activity implements Comparable<Activity>{
 
 	@Override
 	public String toString(){
-		return "Inicio: " + this.start_time + " " + "Termino: " + this.end_time;
+		return "Inicio: " + this.start_time + " " + "Termino: " + this.end_time + "\n";
 	}
 }
