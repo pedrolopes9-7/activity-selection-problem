@@ -11,8 +11,8 @@ To run:
   $ java Main -i <instance_name> -g|-d|-b
 ```
 
--g: Greedy Algorithm
--d: Dynamic Programming Algorithm
--b: Backtracking Algorithm
+-g: Greedy Algorithm.
+-d: Dynamic Programming Algorithm.
+-b: Backtracking Algorithm.
 
 Instacens can be found on ~/instances/
