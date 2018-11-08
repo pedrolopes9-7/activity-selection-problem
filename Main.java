@@ -20,11 +20,12 @@ public class Main {
 		List<Activity> output = null;
 
 		System.out.println("---------Activity Selection Problem---------\n");
-		System.out.println("Setup: java Main -i <file_name> -g|-d|-b");
+		System.out.println("Setup: java Main -i <file_name> -g|-d|-b\n");
 		System.out.println("-i <file_name> to run on instance <file_name>.txt \n" +
 							"-g to run Greedy Heuristic.\n" +
 							"-d to run Dynamic Programming Heuristic\n" +
-							"-b to run Backtracking Heuristic\n");
+							"-b to run Backtracking Heuristic\n" 
+							+ "or run java Main -k to generate a set of instances.\n");
 
 		/* programa principal: le uma instancia do problem especificada no args[1] e executa algum
 			algoritmo, especificado em args[2], para o problema de selecao de atividades*/ 
@@ -98,11 +99,12 @@ public class Main {
 				listWriter.add(new FileWriter(out));
 
 				/* gera m linhas de atividades para a instancia. m = FILE_SIZE */
+				/*TODO bug na linha 107,a cessando posicao invalida da lista de writers. indice maior que tamanho*/
 				for (int j = 0; j < fileSize; j++){
 					random1 = ThreadLocalRandom.current().nextInt(min, max + 1);
 					random2 = ThreadLocalRandom.current().nextInt(min, max + 1);
 					System.out.println(random1 + " " + random2);
-					listWriter.get(j).write(String.valueOf(random1) + " " + String.valueOf(random2) + "\n"); 
+					listWriter.get(i).write(String.valueOf(random1) + " " + String.valueOf(random2) + "\n"); 
 				}
 
 			} catch (IOException ex){
