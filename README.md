@@ -1,7 +1,7 @@
 # activity-selection-problem
 Greedy, Dynamic Programming and Backtracking Algorithms for the Activity Selection Problem
 
-This program solves the problem to select a set of compatible activities from a input set of activities. An activity is compatible with another, if their time interval (finish time - start time) is compatible. The problem is to find the optimal subset (with maximum size) of activities with the property of compatibility between every pair of activities.
+This program solves the problem to select a set of compatible activities from a input set of activities. An activity is compatible with another if their time interval (finish time - start time) is compatible. The problem is to find the optimal subset (with maximum size) of activities with the property of compatibility between every pair of activities.
 
 To compile: 
 ```bash
@@ -23,4 +23,4 @@ Instances can be found on ~/instances/ directory. Any number of intances with an
   $ java Main -k
 ```
 
-Make shure to change the global variables FILE_SIZE and FILE_QNT (size of every instance and quantity of instances, respectively), if you want different type of instances. By default, the values of FILE_SIZE = 200 and FILE_QNT = 200. The integer values of start and finish time of the activities is generated randomly between 1 and 20.
+Make sure to change the global variables FILE_SIZE and FILE_QNT (size of every instance and quantity of instances, respectively), if you want different type of instances. By default, the values of FILE_SIZE = 200 and FILE_QNT = 200. The integer values of start and finish time of the activities is generated randomly between 1 and 20.
