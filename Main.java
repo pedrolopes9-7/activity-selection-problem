@@ -39,13 +39,16 @@ public class Main {
 			if (args[2].equals("-g")){
 				execStartTime = System.nanoTime();
 				output = greedyAlgorithm(listActivities);
-				execFinishTime = System.nanoTime();
-				execTime = (execFinishTime - execStartTime) / BILLION;
+				execFinishTime = System.nanoTime(); execTime = (execFinishTime - execStartTime) / BILLION;
 				writeOutput(output, execTime);
 			}else if (args[2].equals("-d")){
 			//RUN dynamic programming algorithm
 			}else if (args[2].equals("-b")){
-			//RUN backtracking algorithm
+				List<Activity> output = new ArrayList<Activity>;
+				execStartTime = System.nanoTime();
+				backtrackingAlgorithm(listActivities, output);
+				execFinishTime = System.nanoTime(); execTime = (execFinishTime - execStartTime) / BILLION;
+				writeOutput(output, execTime);
 			}
 
 		/* opcao de gerar as intancias do problema*/
@@ -54,6 +57,12 @@ public class Main {
 		}
 	}
 
+	/** Método guloso para a resolução do problema proposto. As atividades são ordenadas crescentemente por tempo
+		de finalização, e então a escolha gulosa é feita: caso a próxima atividade i possuir tempo de inicio maior que
+		o tempo de finalização da atividade corrente j , então adiciona-se a atividade i à solução. Caso contrario, pula
+		para a próxima atividade. 
+		@param activities Lista de atividades
+		@return Lista de atividades compatíveis */
 	public static List<Activity> greedyAlgorithm(List<Activity> activities){
 		List<Activity> selectedActivities = new ArrayList<Activity>();
 		List<Integer> startTimes = new ArrayList<Integer>();
@@ -85,29 +94,60 @@ public class Main {
 		return list;
 	}
 
-	//TODO testar falhas
-	public static List<Activity> backtrackingAlgorithm(List<Activity> activities){
-		Collections.sort(activities);
-		List<Integer> pValues = new ArrayList<Integer>;
-		List<Integer> startTimes = new ArrayList<Integer>();
-		List<Integer> endTimes = new ArrayList<Integer>();
+	/** Função para encontrar a última atividade que não conflita com a atividade i. Se não há atividades conmpatíveis,
+		retorna -1;
+		@param activities Lista de atividades
+		@param i indice da atividade a ser comparada com as outras
+		@return última atividade compatível. caso contrario, -1*/
 
-		for (int k = 0; k < activities.size(); k++){
-			pValues.get(k) = 0;
+	public static int latestNonConflict(List<Activity> activities, int i){
+		for (int j = i - 1; j >= 0; j--){
+			if (activities.get(j).getEndTime() <= activities.get(i-1).getStartTime())
+				return j;
 		}
+		return -1;
+	}
 
-		int i = 0, j;
-		for (j = 1; j < activities.size(); j++){
-			if (startTimes.get(j) >= endTimes.get(i)){
-				pValues.get(j) = i;
-				i = j;
-			}
+	/**Funcao recursiva que encontra a solução ótima para o problema de Weighted Job Scheduling por backtracking.
+		No problema proposto, os pesos das atividades estão fixados em 1. A funcão recebe como parâmetros, a lista
+		de atividades a serem agendadas, uma lista de atividades correspondete a solução ótima e o tamanho da lista
+		inicial. O retorno é o valor ótima da solução.
+		@param activities Lista de atividades a serem agendadas 
+		@param addedList Lista que serão adicionados as atividades que estão na solução ótima
+		@param n tamanho da lista de entrada (activities)
+		@return valor inteiro da solução ótima*/
+
+	public static int backtrackingAlgorithmRec(List<Activity> activities, List<Activity> addedList, int n){
+		if (activities.size() == 1) return activities.get(n - 1);
+
+		int includedProfit = activities.get(n - 1);
+		int i = latestNonConflict(activities, n);
+
+		if (i != -1){
+			includedProfit += backtrackingAlgorithmRec(activities, addedList, i + 1);
+			addedList.add(activities.get(n - 1));
 		}
+		else int excludedProfit = backtrackingAlgorithmRec(activities, addedList, n - 1);
+		
+		return max(includedProfit, excludedProfit);
+	}
 
-		if (j == 0) return 0;
-		else return Math.max(1 + backtrackingAlgorithm(pValues.get(j)), backtrackingAlgorithm(j - 1));
+	/** Função para ordenar as atividades em ordem de tempo de finalização, e iniciar a chamada recursiva para
+		o método auxiliar.
+		@param list Lista das atividades
+		@return void*/
+
+	public static void backtrackingAlgorithm(List<Activity> list, List<Activity> output){
+		Collections.sort(list);
+		return backtrackingAlgorithmRec(list, output, list.size());
 	} 
 
+	/** Função que gera as instâncias para o problema em um arquivo externo. A função gera n instâncias, de tamanho m,
+		que podem ser especificadas pelo programador. Qualquer valor para n ou m é válido. Por padrão, elas serão 
+		salvas em instances/ , este diretório que deve estar no mesmo diretório do programa principal.
+		@param fileQnt quantidade de arquivos a serem gerados
+		@param fileSize tamanho de cada arquivo
+		@return void*/
 	public static void generateInstances(int fileQnt, int fileSize){
 		File out = null;
 		List<FileWriter> listWriter = new ArrayList<FileWriter>(fileQnt);
@@ -145,6 +185,14 @@ public class Main {
 		}
 	}
 
+	/** Função de ler instâncias de arquivos de texto. O padrão de instancias para ser lido, é o mesmo que é 
+		gerado no método generateInstances(), ou seja, para cada linha há dois valores inteiros: um corresponde ao
+		tempo de inicio da atividade, e outro corresponde ao tempo de finalização da atividade. Por padrão as intancias
+		são encontradas em instances/
+		@param fileName nome do arquivo
+		@param activities Lista de atividades
+		@param fileSize tamanho do arquivo a ser lido
+		@return void */
 	public static void readInstances(String fileName, List<Activity> activities, int fileSize){
 		Scanner s = null;
 		try {
@@ -160,6 +208,12 @@ public class Main {
 		}
 	}
 
+	/** Funcao que escreve alguma saída em um arquivo de texto. Os arquivos por padrão terão como destino o diretório 
+		outputs/ , que deve ser criado na mesma pasta do projeto. As saídas possuem nomes diferentes para cada 
+		resolução do problema.
+		@param list Lista de atividades 
+		@param execTime Tempo de execução do método proposto
+		@return void*/
 	public static void writeOutput(List<Activity> list, double execTime){
 		final int subsetSize = list.size();
 		String name = "output" + String.valueOf(ThreadLocalRandom.current().nextInt(1, 10000));
@@ -191,6 +245,7 @@ public class Main {
 class Activity implements Comparable<Activity>{
 	private int start_time;
 	private int end_time;
+	private int profit;
 
 	public Activity(int st, int et){
 		if (st == et){
@@ -203,6 +258,15 @@ class Activity implements Comparable<Activity>{
 			this.start_time = et;
 			this.end_time = st;
 		}
+		this.profit = 1;
+	}
+
+	public int getProfit(){
+		return this.profit;
+	}
+
+	public setProfit(int profit){
+		this.profit = profit;
 	}
 
 	public int getStartTime(){
