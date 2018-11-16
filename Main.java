@@ -85,6 +85,7 @@ public class Main {
 		return list;
 	}
 
+	//TODO testar falhas
 	public static List<Activity> backtrackingAlgorithm(List<Activity> activities){
 		Collections.sort(activities);
 		List<Integer> pValues = new ArrayList<Integer>;
@@ -105,9 +106,7 @@ public class Main {
 
 		if (j == 0) return 0;
 		else return Math.max(1 + backtrackingAlgorithm(pValues.get(j)), backtrackingAlgorithm(j - 1));
-	}
-
-	public static 
+	} 
 
 	public static void generateInstances(int fileQnt, int fileSize){
 		File out = null;
@@ -233,27 +232,3 @@ class Activity implements Comparable<Activity>{
 		return "Inicio: " + this.start_time + " " + "Termino: " + this.end_time + "\n";
 	}
 }
-/*
-class Node {
-    private Activity activity;
-    private Node left;
-    private Node right;
-  
-    Node(int activity) {
-        this.activity = activity;
-        this.right = null;
-        this.left = null;
-    }
-
-    public int getActivity(){
-		return this.activity;
-	}
-
-	public void setActivty(Activity ac){
-		this.activity = ac;
-	}
-
-	public addRecursive(Node current, Activity ac){
-		
-	}
-}*/
