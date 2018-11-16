@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
+import java.lang.Math;
 
 public class Main {
 	public static final String ABSOLUTE_PATH = "instances/";
 	public static final String OUTPUT_PATH = "output/";
-	public static final int FILE_SIZE = 1000000;
+	public static final int FILE_SIZE = 10;
 	public static final int FILE_QNT = 10;
 	public static final double BILLION = 1000000000.0;
 
@@ -84,6 +85,30 @@ public class Main {
 		return list;
 	}
 
+	public static List<Activity> backtrackingAlgorithm(List<Activity> activities){
+		Collections.sort(activities);
+		List<Integer> pValues = new ArrayList<Integer>;
+		List<Integer> startTimes = new ArrayList<Integer>();
+		List<Integer> endTimes = new ArrayList<Integer>();
+
+		for (int k = 0; k < activities.size(); k++){
+			pValues.get(k) = 0;
+		}
+
+		int i = 0, j;
+		for (j = 1; j < activities.size(); j++){
+			if (startTimes.get(j) >= endTimes.get(i)){
+				pValues.get(j) = i;
+				i = j;
+			}
+		}
+
+		if (j == 0) return 0;
+		else return Math.max(1 + backtrackingAlgorithm(pValues.get(j)), backtrackingAlgorithm(j - 1));
+	}
+
+	public static 
+
 	public static void generateInstances(int fileQnt, int fileSize){
 		File out = null;
 		List<FileWriter> listWriter = new ArrayList<FileWriter>(fileQnt);
@@ -138,7 +163,7 @@ public class Main {
 
 	public static void writeOutput(List<Activity> list, double execTime){
 		final int subsetSize = list.size();
-		String name = String.valueOf(ThreadLocalRandom.current().nextInt(1, 10000));
+		String name = "output" + String.valueOf(ThreadLocalRandom.current().nextInt(1, 10000));
 		File output_file = new File(OUTPUT_PATH + name);
 
 		try{
@@ -208,3 +233,27 @@ class Activity implements Comparable<Activity>{
 		return "Inicio: " + this.start_time + " " + "Termino: " + this.end_time + "\n";
 	}
 }
+/*
+class Node {
+    private Activity activity;
+    private Node left;
+    private Node right;
+  
+    Node(int activity) {
+        this.activity = activity;
+        this.right = null;
+        this.left = null;
+    }
+
+    public int getActivity(){
+		return this.activity;
+	}
+
+	public void setActivty(Activity ac){
+		this.activity = ac;
+	}
+
+	public addRecursive(Node current, Activity ac){
+		
+	}
+}*/
