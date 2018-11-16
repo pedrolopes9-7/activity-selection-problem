@@ -44,7 +44,7 @@ public class Main {
 			}else if (args[2].equals("-d")){
 			//RUN dynamic programming algorithm
 			}else if (args[2].equals("-b")){
-				List<Activity> output = new ArrayList<Activity>;
+				output = new ArrayList<Activity>();
 				execStartTime = System.nanoTime();
 				backtrackingAlgorithm(listActivities, output);
 				execFinishTime = System.nanoTime(); execTime = (execFinishTime - execStartTime) / BILLION;
@@ -99,7 +99,6 @@ public class Main {
 		@param activities Lista de atividades
 		@param i indice da atividade a ser comparada com as outras
 		@return última atividade compatível. caso contrario, -1*/
-
 	public static int latestNonConflict(List<Activity> activities, int i){
 		for (int j = i - 1; j >= 0; j--){
 			if (activities.get(j).getEndTime() <= activities.get(i-1).getStartTime())
@@ -116,28 +115,26 @@ public class Main {
 		@param addedList Lista que serão adicionados as atividades que estão na solução ótima
 		@param n tamanho da lista de entrada (activities)
 		@return valor inteiro da solução ótima*/
-
 	public static int backtrackingAlgorithmRec(List<Activity> activities, List<Activity> addedList, int n){
-		if (activities.size() == 1) return activities.get(n - 1);
+		if (activities.size() == 1) return activities.get(n - 1).getProfit();
 
-		int includedProfit = activities.get(n - 1);
+		int includedProfit = activities.get(n - 1).getProfit();
 		int i = latestNonConflict(activities, n);
 
 		if (i != -1){
 			includedProfit += backtrackingAlgorithmRec(activities, addedList, i + 1);
 			addedList.add(activities.get(n - 1));
 		}
-		else int excludedProfit = backtrackingAlgorithmRec(activities, addedList, n - 1);
+		int excludedProfit = backtrackingAlgorithmRec(activities, addedList, n - 1);
 		
-		return max(includedProfit, excludedProfit);
+		return Math.max(includedProfit, excludedProfit);
 	}
 
 	/** Função para ordenar as atividades em ordem de tempo de finalização, e iniciar a chamada recursiva para
 		o método auxiliar.
 		@param list Lista das atividades
 		@return void*/
-
-	public static void backtrackingAlgorithm(List<Activity> list, List<Activity> output){
+	public static int backtrackingAlgorithm(List<Activity> list, List<Activity> output){
 		Collections.sort(list);
 		return backtrackingAlgorithmRec(list, output, list.size());
 	} 
@@ -265,7 +262,7 @@ class Activity implements Comparable<Activity>{
 		return this.profit;
 	}
 
-	public setProfit(int profit){
+	public void setProfit(int profit){
 		this.profit = profit;
 	}
 
