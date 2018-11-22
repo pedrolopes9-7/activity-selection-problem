@@ -8,30 +8,30 @@ import java.util.Random;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 import java.lang.Math;
+import java.lang.Integer;
 
 public class Main {
 	public static final String ABSOLUTE_PATH = "instances/";
 	public static final String OUTPUT_PATH = "output/";
-	public static final int FILE_SIZE = 10;
-	public static final int FILE_QNT = 10;
 	public static final double BILLION = 1000000000.0;
+	public static final int FILE_SIZE = 10000;
 
+ /** */
 	public static void main (String[] args){
 		double execTime = 0, execStartTime = 0, execFinishTime = 0;
 		String fileName = "";
 		List<Activity> listActivities = new ArrayList<Activity>();
 		List<Activity> output = null;
+		int fileQnt = 1;
 
 		System.out.println("---------Activity Selection Problem---------\n");
 		System.out.println("Setup: java Main -i <file_name> -g|-d|-b\n");
 		System.out.println("-i <file_name> to run on instance <file_name>.txt \n" +
 							"-g to run Greedy Heuristic.\n" +
 							"-d to run Dynamic Programming Heuristic\n" +
-							"-b to run Backtracking Heuristic\n" 
-							+ "or run java Main -k to generate a set of instances.\n");
-
-		/* programa principal: le uma instancia do problem especificada no args[1] e executa algum
-			algoritmo, especificado em args[2], para o problema de selecao de atividades*/ 
+							"-b to run Backtracking Heuristic\n" +
+							"or run java Main -k <file_size> <number_of_files>.\n");
+ 
 		if (args[0].equals("-i")){
 			fileName = ABSOLUTE_PATH + args[1] + ".txt";
 			readInstances(fileName, listActivities, FILE_SIZE);
@@ -53,7 +53,8 @@ public class Main {
 
 		/* opcao de gerar as intancias do problema*/
 		}else if (args[0].equals("-k")){
-			generateInstances(FILE_QNT, FILE_SIZE);
+		 	fileQnt = Integer.parseInt(args[1]);
+			generateInstances(fileQnt, FILE_SIZE);
 		}
 	}
 
@@ -70,7 +71,6 @@ public class Main {
 
 		int i = 0, j;
 
-		//Ordenação crescente por tempo de finalizacao
 		Collections.sort(activities);
 
 		for (int k = 0; k < activities.size(); k++){
@@ -78,8 +78,6 @@ public class Main {
 			endTimes.add(activities.get(k).getEndTime());
 		}
 
-		/* Escolha gulosa - checa se o tempo de inicio da próxima atividade é maior ou igual ao tempo de 
-		finalizacao da utlima atividade inserida na sub-estrutura otima */
 		for (j = 1; j < activities.size(); j++){
 			if (startTimes.get(j) >= endTimes.get(i)){
 				selectedActivities.add(activities.get(j));
@@ -94,8 +92,8 @@ public class Main {
 		return list;
 	}
 
-	/** Função para encontrar a última atividade que não conflita com a atividade i. Se não há atividades conmpatíveis,
-		retorna -1;
+	/** Função auxiliar para backtracking. Encontra a última atividade que não conflita com a atividade i. 
+		Se não há atividades conmpatíveis, retorna -1;
 		@param activities Lista de atividades
 		@param i indice da atividade a ser comparada com as outras
 		@return última atividade compatível. caso contrario, -1*/
@@ -120,7 +118,7 @@ public class Main {
 
 		int includedProfit = activities.get(n - 1).getProfit();
 		int i = latestNonConflict(activities, n);
-
+		System.out.println(i);
 		if (i != -1){
 			includedProfit += backtrackingAlgorithmRec(activities, addedList, i + 1);
 			addedList.add(activities.get(n - 1));
@@ -141,7 +139,11 @@ public class Main {
 
 	/** Função que gera as instâncias para o problema em um arquivo externo. A função gera n instâncias, de tamanho m,
 		que podem ser especificadas pelo programador. Qualquer valor para n ou m é válido. Por padrão, elas serão 
-		salvas em instances/ , este diretório que deve estar no mesmo diretório do programa principal.
+		salvas em instances/ , este diretório que deve estar no mesmo diretório do programa principal. Nomes das ins-
+		tancias variam de acordo com o tamanho da mesma: 
+			se FILE_SIZE [0,1000] -> pequena
+			se FILE_SIZE [1000,10000] -> média
+			se FILE_SIZE > 10000 -> grande
 		@param fileQnt quantidade de arquivos a serem gerados
 		@param fileSize tamanho de cada arquivo
 		@return void*/
@@ -149,19 +151,22 @@ public class Main {
 		File out = null;
 		List<FileWriter> listWriter = new ArrayList<FileWriter>(fileQnt);
 
-		/* intervalo do numero aleatorio*/
 		final int min = 1, max = 180;
 		int random1 = 0, random2 = 0;;
 
-		/* gera n instancias para o problema. n = FILE_QNT*/
 		for (int i = 0; i < fileQnt; i++){
-			out = new File(ABSOLUTE_PATH + "instance" + i + ".txt");
+			String sufix = String.valueOf(ThreadLocalRandom.current().nextInt(1, 10000));
+			String name = "";
+			
+			if (fileSize < 1000) name = ABSOLUTE_PATH + "SMALL_instance" + sufix + ".txt";
+			else if (fileSize < 10000) name = ABSOLUTE_PATH + "MEDIUM_instance" + sufix + ".txt";
+			else name = ABSOLUTE_PATH + "BIG_instance" + sufix + ".txt";
 
+			out = new File(name);
 			try{
 				out.createNewFile();
 				listWriter.add(new FileWriter(out));
 
-				/* gera m linhas de atividades para a instancia. m = FILE_SIZE */
 				for (int j = 0; j < fileSize; j++){
 					random1 = ThreadLocalRandom.current().nextInt(min, max + 1);
 					random2 = ThreadLocalRandom.current().nextInt(min, max + 1);
@@ -213,7 +218,7 @@ public class Main {
 		@return void*/
 	public static void writeOutput(List<Activity> list, double execTime){
 		final int subsetSize = list.size();
-		String name = "output" + String.valueOf(ThreadLocalRandom.current().nextInt(1, 10000));
+		String name = "output" + String.valueOf(ThreadLocalRandom.current().nextInt(1, 1000));
 		File output_file = new File(OUTPUT_PATH + name);
 
 		try{
