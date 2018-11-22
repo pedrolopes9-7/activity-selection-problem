@@ -14,7 +14,7 @@ public class Main {
 	public static final String ABSOLUTE_PATH = "instances/";
 	public static final String OUTPUT_PATH = "output/";
 	public static final double BILLION = 1000000000.0;
-	public static final int FILE_SIZE = 10000;
+	public static final int FILE_SIZE = 100;
 
  /** */
 	public static void main (String[] args){
@@ -42,7 +42,10 @@ public class Main {
 				execFinishTime = System.nanoTime(); execTime = (execFinishTime - execStartTime) / BILLION;
 				writeOutput(output, execTime);
 			}else if (args[2].equals("-d")){
-			//RUN dynamic programming algorithm
+				execStartTime = System.nanoTime();
+				output = DP_Algorithm(listActivities, listActivities.size());
+				execFinishTime = System.nanoTime(); execTime = (execFinishTime - execStartTime) / BILLION;
+				writeOutput(output, execTime);
 			}else if (args[2].equals("-b")){
 				output = new ArrayList<Activity>();
 				execStartTime = System.nanoTime();
@@ -87,9 +90,32 @@ public class Main {
 		return selectedActivities;
 	}
 
-	public static List<Activity> DP_Algorithm(List<Activity> activities){
-		List<Activity> list = new ArrayList<Activity>();
-		return list;
+	/**´Método para resolução do problema de job scheduling por programação dinâmica. Cria a tabela de pesos das 
+		atividades e inclui a melhor solução para a lista.
+		@param activities lista de atividades
+		@param n tamanho da lista de atividades
+		@return Lista de atividades compatíveis
+		*/
+	public static List<Activity> DP_Algorithm(List<Activity> activities, int n){
+		Collections.sort(activities);
+
+		List<Activity> addedList = new ArrayList<Activity>();
+
+		int table[] = new int[n];
+		table[0] = activities.get(0).getProfit();
+
+		for (int i = 1; i < n; i++){
+			int includedProfit = activities.get(i).getProfit();
+			int l = latestNonConflict(activities, i);
+
+			if (l != -1) {
+				includedProfit += table[l];
+				addedList.add(activities.get(l));
+			}
+
+			int resultado = table[n-1];
+		}
+		return addedList;
 	}
 
 	/** Função auxiliar para backtracking. Encontra a última atividade que não conflita com a atividade i. 
@@ -105,6 +131,7 @@ public class Main {
 		return -1;
 	}
 
+	//TODO - Bugs na hora de adicionar a atividade para a solucao otima
 	/**Funcao recursiva que encontra a solução ótima para o problema de Weighted Job Scheduling por backtracking.
 		No problema proposto, os pesos das atividades estão fixados em 1. A funcão recebe como parâmetros, a lista
 		de atividades a serem agendadas, uma lista de atividades correspondete a solução ótima e o tamanho da lista
@@ -114,14 +141,14 @@ public class Main {
 		@param n tamanho da lista de entrada (activities)
 		@return valor inteiro da solução ótima*/
 	public static int backtrackingAlgorithmRec(List<Activity> activities, List<Activity> addedList, int n){
-		if (activities.size() == 1) return activities.get(n - 1).getProfit();
+		if (n == 1) return activities.get(n - 1).getProfit();
 
 		int includedProfit = activities.get(n - 1).getProfit();
 		int i = latestNonConflict(activities, n);
 		System.out.println(i);
 		if (i != -1){
 			includedProfit += backtrackingAlgorithmRec(activities, addedList, i + 1);
-			addedList.add(activities.get(n - 1));
+			addedList.add(activities.get(i));
 		}
 		int excludedProfit = backtrackingAlgorithmRec(activities, addedList, n - 1);
 		
